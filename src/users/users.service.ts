@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateUserDto } from "./users.dto";
 import { User } from "./users.entity";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -14,21 +15,23 @@ export class UsersService {
 
         try {
 
-            // let presentUsername = await this.repository.findOne({ username: body.username });
-            // let presentEmail = await this.repository.findOne({ email: body.email });
+            let presentUsername = await this.repository.findOne({ where: { username: body.username } });
+            let presentEmail = await this.repository.findOne({ where: { email: body.email } });
 
-            // if (presentUsername) {
-            //     throw "Username already in use"
-            // }
+            if (presentUsername) {
+                throw "Username already in use"
+            }
 
-            // if (presentEmail) {
-            //     throw "Email already in use"
-            // }
+            if (presentEmail) {
+                throw "Email already in use"
+            }
+
+            let genSalt = await bcrypt.genSalt();
 
             const user: User = new User(
                 body.name,
                 body.email,
-                body.password,
+                await bcrypt.hash(body.password, genSalt),
                 body.surname,
                 body.username,
             );
