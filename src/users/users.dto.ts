@@ -4,18 +4,23 @@ export class CreateUserDto {
 
     @IsString()
     @IsNotEmpty()
-    public name: string;
+    public username: string;
 
     @IsEmail()
+    @IsNotEmpty()
     public email: string;
 
     @IsString()
-    public username: string;
-
-    @IsString()
+    @IsNotEmpty()
     public password: string;
+    // TODO: ver de agregar validaciones para: 6 or more characters, One number, One letter, One special character
+
+}
+
+export class ChangeUsernameDto {
 
     @IsString()
-    public surname: string;
+    @IsNotEmpty()
+    public new_username: string;
 
 }

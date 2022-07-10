@@ -1,5 +1,5 @@
-import { Body, Controller, Inject, Post } from "@nestjs/common";
-import { CreateUserDto } from "./users.dto";
+import { Body, Controller, HttpException, Inject, Post } from "@nestjs/common";
+import { ChangeUsernameDto, CreateUserDto } from "./users.dto";
 import { User } from "./users.entity";
 import { UsersService } from "./users.service";
 
@@ -14,7 +14,30 @@ export class UsersController {
 
         let newUserResult = await this.service.createUser(body);
 
-        return newUserResult;
+        if (newUserResult.hasFailed()) {
+            throw new HttpException(
+                newUserResult.getError().getDescription(),
+                newUserResult.getError().getCode(),
+            );
+        }
+
+        return newUserResult.getData();
     }
+
+    // @Post()
+    // public async changeUsername(@Body() body: ChangeUsernameDto): Promise<User> {
+
+    //     // TODO: agregar user como parametro
+    //     let updatedUserResult = await this.service.changeUsername(body);
+
+    //     if (updatedUserResult.hasFailed()) {
+    //         throw new HttpException(
+    //             updatedUserResult.getError().getDescription(),
+    //             updatedUserResult.getError().getCode(),
+    //         );
+    //     }
+
+    //     return updatedUserResult.getData();
+    // }
 
 }
