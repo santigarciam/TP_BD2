@@ -40,17 +40,19 @@ export class AuthenticationMiddleWare implements NestMiddleware {
                     req.headers['authorization'] = 'Bearer ' + token; // Preparamos el header para el response que tenga el bearer token
                     await this.authservice.verify(token); // Verificamos el token del header y obtenemos al usuario que lo genero
                 } else {
-                    throw new UnauthorizedException('Error');
+                    throw "Bad credentials";
                 }
             } else if (header_req.toLocaleLowerCase().includes('bearer')) {
                 token = header_req.split(' ')[1];
                 await this.authservice.verify(token); // Verificamos el token del header y obtenemos al usuario que lo genero
+            } else {
+                throw "No authorization provided"
             }
 
             next();
 
         } catch (err: any) {
-            next(new UnauthorizedException('Invalid Token'));
+            next(new UnauthorizedException(err));
         }
 
     }
