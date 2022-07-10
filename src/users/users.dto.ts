@@ -24,3 +24,15 @@ export class ChangeUsernameDto {
     public new_username: string;
 
 }
+
+export class ChangePasswordDto {
+
+    @IsString()
+    @IsNotEmpty()
+    public new_password: string;
+
+    @IsString()
+    @IsNotEmpty()
+    public confirm_password: string;
+
+}

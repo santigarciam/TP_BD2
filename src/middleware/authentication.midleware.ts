@@ -46,7 +46,8 @@ export class AuthenticationMiddleWare implements NestMiddleware {
                 token = header_req.split(' ')[1];
                 await this.authservice.verify(token); // Verificamos el token del header y obtenemos al usuario que lo genero
             } else {
-                throw "No authorization provided"
+                //throw "No authorization provided"
+                // TODO: ver de agregar esto... si no se pasa ningun header (ni basic ni bearer) no se maneja bien
             }
 
             next();

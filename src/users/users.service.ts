@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { ChangeUsernameDto, CreateUserDto } from "./users.dto";
+import { ChangePasswordDto, ChangeUsernameDto, CreateUserDto } from "./users.dto";
 import { User } from "./users.entity";
 import * as bcrypt from 'bcrypt';
 import Result from "../Result";
@@ -88,6 +88,24 @@ export class UsersService {
             }
 
             user.username = body.new_username;
+            await this.repository.save(user);
+
+            return Result.ok(user as User);
+
+        } catch (err: any) {
+
+            return Result.failed(new ErrorResponse(409, err));
+
+        }
+    }
+
+    public async changePassword(user: User, body: ChangePasswordDto): Promise<Result<User>> {
+
+        try {
+
+            let genSalt = await bcrypt.genSalt();
+
+            user.password = await bcrypt.hash(body.new_password, genSalt);
             await this.repository.save(user);
 
             return Result.ok(user as User);

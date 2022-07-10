@@ -1,6 +1,7 @@
 import { Body, Controller, HttpException, Inject, Post, SetMetadata } from "@nestjs/common";
+import { AuthService } from "../auth/auth.service";
 import { RequestService } from "../request/request.service";
-import { ChangeUsernameDto, CreateUserDto } from "./users.dto";
+import { ChangePasswordDto, ChangeUsernameDto, CreateUserDto } from "./users.dto";
 import { User } from "./users.entity";
 import { UsersService } from "./users.service";
 
@@ -37,6 +38,30 @@ export class UsersController {
         let user: User = this.requestService.getUser();
 
         let updatedUserResult = await this.service.changeUsername(user, body);
+
+        if (updatedUserResult.hasFailed()) {
+            throw new HttpException(
+                updatedUserResult.getError().getDescription(),
+                updatedUserResult.getError().getCode(),
+            );
+        }
+
+        return updatedUserResult.getData();
+    }
+
+    @Post('/password')
+    public async changePassword(@Body() body: ChangePasswordDto): Promise<User> {
+
+        if (!(body.new_password === body.confirm_password)) {
+            throw new HttpException(
+                "Passwords do not match",
+                400,
+            );
+        }
+
+        let user: User = this.requestService.getUser();
+
+        let updatedUserResult = await this.service.changePassword(user, body);
 
         if (updatedUserResult.hasFailed()) {
             throw new HttpException(

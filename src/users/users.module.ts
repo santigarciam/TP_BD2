@@ -1,4 +1,4 @@
-import { Module, Scope } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { RequestModule } from '../request/request.module';
 import { UsersController } from "./users.controller";
