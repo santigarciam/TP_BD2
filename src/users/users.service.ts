@@ -47,6 +47,36 @@ export class UsersService {
 
     }
 
+    public async getUser(id: number): Promise<Result<User>> {
+        try {
+            let user = await this.repository.findOne({ where: { id: id } });
+
+            if (!user) {
+                throw "User not found";
+            }
+
+            return Result.ok(user as User);
+        } catch (err: any) {
+            return Result.failed(new ErrorResponse(404, err));
+        }
+    }
+
+    public async getByUsername(
+        username: string,
+    ): Promise<Result<User | undefined>> {
+        try {
+            let user = await this.repository.findOne({ where: { username: username } });
+
+            if (!user) {
+                throw "User not found";
+            }
+
+            return Result.ok(user as User);
+        } catch (err: any) {
+            return Result.failed(new ErrorResponse(404, err));
+        }
+    }
+
     public async changeUsername(user: User, body: ChangeUsernameDto): Promise<Result<User>> {
 
         try {
