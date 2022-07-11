@@ -1,22 +1,69 @@
-import { Controller, Inject } from '@nestjs/common';
-import { Post, Param, ParseIntPipe, Body } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  HttpCode,
+  Inject,
+  Param,
+  Put,
+} from '@nestjs/common';
+import { Post, Get, Body } from '@nestjs/common';
+import { RequestService } from 'src/request/request.service';
+import { updateUrlDto } from './updateUrl.dto';
 import { urlDto } from './urls.dto';
-import { Url_entity } from './urls.schema';
-import { UrlsService } from './urls.service';
+import { Url_entity, UserUrl } from './urls.schema';
+import { UserUrlService } from './urls.service';
 
 @Controller('urls')
 export class UrlsController {
-  @Inject(UrlsService)
-  private urlService: UrlsService;
+  @Inject(UserUrlService)
+  private userUrlService: UserUrlService;
+
+  @Inject(RequestService)
+  private requestService: RequestService;
 
   @Post()
-  public async createUrl(@Body() body: urlDto): Promise<string> {
-    console.log('exx');
-    const urlAux = new Url_entity();
-    urlAux.clicks = 0;
-    urlAux.long_link = body.long_link;
-    urlAux.short_link = body.short_link;
-    urlAux.title = body.title;
-    return this.urlService.create(body);
+  public async createUrl(@Body() body: urlDto): Promise<UserUrl> {
+    const userId = this.requestService.getUser().id;
+
+    return this.userUrlService.addUrlToUser(userId, body);
+  }
+
+  @Put('/:short_link')
+  public async updateUrl(
+    @Param('short_link') short_link: string,
+    @Body() body: updateUrlDto,
+  ): Promise<UserUrl> {
+    const userId = this.requestService.getUser().id;
+    console.log('user id get put', userId);
+
+    const url = await this.getUserUrlById(short_link);
+    if (url) {
+      return this.userUrlService.updateUrl(userId, body, url);
+    }
+  }
+  @Get()
+  public async getUserUrls(): Promise<UserUrl> {
+    const userId = this.requestService.getUser().id;
+    return this.userUrlService.getUserUrlsById(userId);
+  }
+
+  // TODO: Meter logica de aumentar los clicks pero usando redis!
+  @Get('/:short_link')
+  public async getUserUrlById(@Param('short_link') short_link: string) {
+    const userId = this.requestService.getUser().id;
+    console.log('user id get userurl', userId);
+    const userUrls = await this.userUrlService.getUserUrlsById(userId);
+    if (userUrls) {
+      const url = userUrls.urls.find(
+        (element) => element.short_link == short_link,
+      );
+      return url;
+    }
+  }
+
+  @Delete('/:short_link')
+  public async deleteUrlById(@Param('short_link') short_link: string) {
+    const userId = this.requestService.getUser().id;
+    this.userUrlService.deleteUrlFromUser(userId, short_link);
   }
 }
