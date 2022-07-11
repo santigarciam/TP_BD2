@@ -6,6 +6,8 @@ export type UrlDocument = Url_entity & Document;
 
 @Schema()
 export class Url_entity {
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  _id: string;
   @Prop()
   short_link: string;
 

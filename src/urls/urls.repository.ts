@@ -24,7 +24,16 @@ export class UserUrlRepository {
     url: Url_entity,
   ): Promise<UserUrl> {
     const user = await this.userUrlModel.findById(urlFilterQuery);
-    user.urls.push(url);
+    // Buscamos si ya existe ese short link para ese usuario, en caso de que exista actualizamos su info
+    const index = user.urls.findIndex(
+      (element) => element.short_link == url.short_link,
+    );
+
+    if (index >= 0) {
+      user.urls[index] = url;
+    } else {
+      user.urls.push(url);
+    }
 
     return user.save();
   }

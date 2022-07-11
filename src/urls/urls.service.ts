@@ -11,10 +11,6 @@ export class UserUrlService {
     return this.userUrlRepository.findOne({ userId });
   }
 
-  async getUserUrls(userId: number): Promise<UserUrl[]> {
-    return this.userUrlRepository.list({ _id: userId });
-  }
-
   async createUserUrl(userId: number): Promise<UserUrl> {
     return this.userUrlRepository.create({
       _id: userId,

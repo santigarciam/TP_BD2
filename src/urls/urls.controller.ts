@@ -1,5 +1,5 @@
-import { Controller, Inject } from '@nestjs/common';
-import { Post, Get, ParseIntPipe, Body } from '@nestjs/common';
+import { Controller, Inject, Param } from '@nestjs/common';
+import { Post, Get, Body } from '@nestjs/common';
 import { RequestService } from 'src/request/request.service';
 import { urlDto } from './urls.dto';
 import { Url_entity, UserUrl } from './urls.schema';
@@ -21,8 +21,19 @@ export class UrlsController {
   }
 
   @Get()
-  public async getUserUrls(): Promise<UserUrl[]> {
+  public async getUserUrls(): Promise<UserUrl> {
     const userId = this.requestService.getUser().id;
-    return this.userUrlService.getUserUrls(userId);
+    return this.userUrlService.getUserUrlsById(userId);
+  }
+
+  @Get('/:short_link')
+  public async getUserUrlById(@Param('short_link') short_link: string) {
+    const userId = this.requestService.getUser().id;
+    const userUrls = await this.userUrlService.getUserUrlsById(userId);
+
+    const url = userUrls.urls.find(
+      (element) => element.short_link == short_link,
+    );
+    return url;
   }
 }
