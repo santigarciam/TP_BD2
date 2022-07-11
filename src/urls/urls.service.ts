@@ -12,12 +12,12 @@ export class UserUrlService {
   }
 
   async getUserUrls(userId: number): Promise<UserUrl[]> {
-    return this.userUrlRepository.list({ userId });
+    return this.userUrlRepository.list({ _id: userId });
   }
 
   async createUserUrl(userId: number): Promise<UserUrl> {
     return this.userUrlRepository.create({
-      user_id: userId,
+      _id: userId,
       urls: [],
     });
   }
@@ -29,6 +29,6 @@ export class UserUrlService {
     url.short_link = urlDto.short_link;
     url.title = urlDto.title;
     url.tags = [];
-    return this.userUrlRepository.findOneAndUpdate({ userId }, url);
+    return this.userUrlRepository.findOneAndUpdate({ _id: userId }, url);
   }
 }

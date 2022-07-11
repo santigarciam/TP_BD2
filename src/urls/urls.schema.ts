@@ -24,7 +24,7 @@ export class Url_entity {
 @Schema()
 export class UserUrl {
   @Prop()
-  user_id: number;
+  _id: number;
 
   @Prop([Url_entity])
   urls: Url_entity[];

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
-import { urlDto } from './urls.dto';
 import {
   UserUrlDocument,
   UserUrl,
@@ -15,8 +14,8 @@ export class UserUrlRepository {
     @InjectModel(UserUrl.name) private userUrlModel: Model<UserUrlDocument>,
   ) {}
 
-  async create(url: UserUrl): Promise<UserUrl> {
-    const createUrl = new this.userUrlModel(urlDto);
+  async create(userUrl: UserUrl): Promise<UserUrl> {
+    const createUrl = new this.userUrlModel(userUrl);
     return createUrl.save();
   }
 
@@ -24,9 +23,10 @@ export class UserUrlRepository {
     urlFilterQuery: FilterQuery<UserUrl>,
     url: Url_entity,
   ): Promise<UserUrl> {
-    const user = await this.userUrlModel.findOne(urlFilterQuery);
+    const user = await this.userUrlModel.findById(urlFilterQuery);
     user.urls.push(url);
-    return user;
+
+    return user.save();
   }
 
   async findOne(urlFilterQuery: FilterQuery<UserUrl>): Promise<UserUrl> {

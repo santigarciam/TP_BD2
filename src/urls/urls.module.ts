@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
+import { Module, RequestMapping } from '@nestjs/common';
 import { UrlsController } from './urls.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserUrlSchema, UserUrl } from './urls.schema';
 import { UserUrlRepository } from './urls.repository';
 import { UserUrlService } from './urls.service';
+import { RequestModule } from 'src/request/request.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: UserUrl.name, schema: UserUrlSchema }]),
+    RequestModule,
   ],
   controllers: [UrlsController],
   providers: [UserUrlService, UserUrlRepository],
