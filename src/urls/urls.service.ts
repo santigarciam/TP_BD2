@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { urlDto } from './urls.dto';
 import { Url_entity, UserUrl } from './urls.schema';
 import { UserUrlRepository } from './urls.repository';
+import { updateUrlDto } from './updateUrl.dto';
 
 @Injectable()
 export class UserUrlService {
@@ -25,6 +26,17 @@ export class UserUrlService {
     url.short_link = urlDto.short_link;
     url.title = urlDto.title;
     url.tags = [];
+    return this.userUrlRepository.findOneAndUpdate({ _id: userId }, url);
+  }
+
+  async updateUrl(
+    userId: number,
+    urlDto: updateUrlDto,
+    url: Url_entity,
+  ): Promise<UserUrl> {
+    url.long_link = urlDto.long_link;
+    url.title = urlDto.title;
+    url.tags = url.tags.concat(urlDto.tags);
     return this.userUrlRepository.findOneAndUpdate({ _id: userId }, url);
   }
 }
