@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, Inject, Post, SetMetadata } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, Inject, Post, SetMetadata } from "@nestjs/common";
 import { AuthService } from "../auth/auth.service";
 import { RequestService } from "../request/request.service";
 import { ChangePasswordDto, ChangeUsernameDto, CreateUserDto } from "./users.dto";
@@ -30,6 +30,11 @@ export class UsersController {
         }
 
         return newUserResult.getData();
+    }
+
+    @Get('/profile')
+    public async getProfile(): Promise<User> {
+        return this.requestService.getUser();
     }
 
     @Post('/edit')
