@@ -26,7 +26,11 @@ export class UserUrlService {
     url.short_link = urlDto.short_link;
     url.title = urlDto.title;
     url.tags = [];
-    return this.userUrlRepository.findOneAndUpdate({ _id: userId }, url);
+    return this.userUrlRepository.findOneAndAddUrl({ _id: userId }, url);
+  }
+
+  async deleteUrlFromUser(userId: number, short_link: string) {
+    this.userUrlRepository.deleteUrlFromUser({ _id: userId }, short_link);
   }
 
   async updateUrl(
@@ -37,6 +41,6 @@ export class UserUrlService {
     url.long_link = urlDto.long_link;
     url.title = urlDto.title;
     url.tags = url.tags.concat(urlDto.tags);
-    return this.userUrlRepository.findOneAndUpdate({ _id: userId }, url);
+    return this.userUrlRepository.findOneAndAddUrl({ _id: userId }, url);
   }
 }

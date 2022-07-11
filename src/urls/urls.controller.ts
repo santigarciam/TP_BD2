@@ -1,4 +1,11 @@
-import { Controller, Inject, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  HttpCode,
+  Inject,
+  Param,
+  Put,
+} from '@nestjs/common';
 import { Post, Get, Body } from '@nestjs/common';
 import { RequestService } from 'src/request/request.service';
 import { updateUrlDto } from './updateUrl.dto';
@@ -52,5 +59,11 @@ export class UrlsController {
       );
       return url;
     }
+  }
+
+  @Delete('/:short_link')
+  public async deleteUrlById(@Param('short_link') short_link: string) {
+    const userId = this.requestService.getUser().id;
+    this.userUrlService.deleteUrlFromUser(userId, short_link);
   }
 }

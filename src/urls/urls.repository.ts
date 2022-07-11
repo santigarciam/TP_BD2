@@ -19,7 +19,24 @@ export class UserUrlRepository {
     return createUrl.save();
   }
 
-  async findOneAndUpdate(
+  async deleteUrlFromUser(
+    urlFilterQuery: FilterQuery<UserUrl>,
+    short_link: string,
+  ) {
+    const user = await this.userUrlModel.findById(urlFilterQuery);
+    if (!user) {
+      return null;
+    }
+    const index = user.urls.findIndex(
+      (element) => element.short_link == short_link,
+    );
+    if (index > 0) {
+      user.urls.splice(index);
+      user.save();
+    }
+  }
+
+  async findOneAndAddUrl(
     urlFilterQuery: FilterQuery<UserUrl>,
     url: Url_entity,
   ): Promise<UserUrl> {
