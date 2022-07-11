@@ -25,53 +25,24 @@ export class RedisService {
         }
     }
 
-    public async createUrlObject(shortUrl: string, longUrl: string): Promise<ShortUrl> {
+    public async createUrlKeyValue(shortUrl: string, longUrl: string): Promise<boolean> {
 
         await this.connect();
 
-        const repository = this.client.fetchRepository(schema);
+        let alreadyCreated = await this.client.get(shortUrl);
 
-        let newUrl: ShortUrl = repository.createEntity();
-
-        newUrl.shortUrl = shortUrl;
-        newUrl.longUrl = longUrl;
-
-        const id = await repository.save(newUrl);
-
-        await repository.createIndex();
-
-        return await repository.fetch(id);
-
-    }
-
-    public async createUrlKeyValue(shortUrl: string, longUrl: string) {
-
-        await this.connect();
-
-        this.client.set(shortUrl, longUrl);
-
-    }
-
-    public async getUrlByText(shortUrl: string): Promise<ShortUrl[]> {
-
-        await this.connect();
-
-        const repository = this.client.fetchRepository(schema);
-
-        const url = await repository
-            .search()
-            .where('shortUrl')
-            .match(shortUrl + '*')
-            .returnAll();
-
-        return url;
+        if (!alreadyCreated) {
+            this.client.set(shortUrl, longUrl);
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
     public async getUrlByHash(shortUrl: string): Promise<string> {
 
         await this.connect();
-
         return this.client.get(shortUrl);
 
     }

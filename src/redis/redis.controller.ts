@@ -1,10 +1,6 @@
-import { Body, Controller, Get, Inject, Param, Post, Redirect, Res } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpException, Inject, Param, Post, Redirect } from "@nestjs/common";
+import { NewShortLinkDto } from "./newShortLink.dto";
 import { RedisService } from "./redis.service";
-
-interface ShortUrl {
-    shortUrl: string;
-    longUrl: string;
-}
 
 @Controller('redis')
 export class RedisController {
@@ -12,28 +8,32 @@ export class RedisController {
     @Inject(RedisService)
     private readonly redisService: RedisService;
 
-    // @Post('/testObject')
-    // public async testObject(@Body() body: any): Promise<ShortUrl> {
-    //     return await this.redisService.createUrlObject("prueba", "www.google.com");
-    // }
+    @Post('/create')
+    @HttpCode(204)
+    public async testKeyValue(@Body() body: NewShortLinkDto) {
+        let succesfull = await this.redisService.createUrlKeyValue(body.short_url, body.long_url);
+        if (succesfull) {
+            return;
+        } else {
+            throw new HttpException(
+                "Short URL unavailable :(",
+                409,
+            );
+        }
 
-    @Post('/testKeyValue')
-    public async testKeyValue(@Body() body: any) {
-        await this.redisService.createUrlKeyValue("prueba", "https://www.google.com/");
     }
-
-    // @Get('/getTextSearch')
-    // public async testGetFullTextSearch(): Promise<ShortUrl[]> {
-    //     return await this.redisService.getUrlByText("prueba");
-    // }
 
     @Get('/goto/:hash')
     @Redirect()
     public async testGetByHash(@Param('hash') hash: string) {
         let longUrl: string = await this.redisService.getUrlByHash(hash);
         if (longUrl) {
-            // OBS: para que ande bien, el longUrl tiene que ser de la forma: "http.....com"
             return { url: longUrl };
+        } else {
+            throw new HttpException(
+                "Short URL not found :(",
+                404,
+            );
         }
     }
 
