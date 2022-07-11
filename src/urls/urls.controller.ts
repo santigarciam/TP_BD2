@@ -23,6 +23,7 @@ export class UrlsController {
 
   @Post()
   public async createUrl(@Body() body: urlDto): Promise<UserUrl> {
+    // TODO: Agregar chequeo con redis si ese short_link ya existe
     const userId = this.requestService.getUser().id;
 
     return this.userUrlService.addUrlToUser(userId, body);
@@ -34,8 +35,6 @@ export class UrlsController {
     @Body() body: updateUrlDto,
   ): Promise<UserUrl> {
     const userId = this.requestService.getUser().id;
-    console.log('user id get put', userId);
-
     const url = await this.getUserUrlById(short_link);
     if (url) {
       return this.userUrlService.updateUrl(userId, body, url);
@@ -51,7 +50,6 @@ export class UrlsController {
   @Get('/:short_link')
   public async getUserUrlById(@Param('short_link') short_link: string) {
     const userId = this.requestService.getUser().id;
-    console.log('user id get userurl', userId);
     const userUrls = await this.userUrlService.getUserUrlsById(userId);
     if (userUrls) {
       const url = userUrls.urls.find(
