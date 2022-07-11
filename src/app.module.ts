@@ -11,6 +11,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LogginInterceptor } from './interceptors/loggin.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { RequestModule } from './request/request.module';
+import { RedisModule } from './redis/redis.module';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -18,6 +19,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
   imports: [
     ConfigModule.forRoot({ envFilePath, isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+    RedisModule,
     UrlsModule,
     UsersModule,
     AuthModule,
