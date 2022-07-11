@@ -1,16 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 
-export type URLDocument = userUrl & Document;
-
-@Schema()
-export class userUrl {
-  @Prop()
-  _id: number;
-
-  @Prop()
-  urls: Url_entity[];
-}
+export type UserUrlDocument = UserUrl & Document;
+export type UrlDocument = Url_entity & Document;
 
 @Schema()
 export class Url_entity {
@@ -29,4 +21,14 @@ export class Url_entity {
   tags: string[];
 }
 
-export const UrlSchema = SchemaFactory.createForClass(userUrl);
+@Schema()
+export class UserUrl {
+  @Prop()
+  user_id: number;
+
+  @Prop([Url_entity])
+  urls: Url_entity[];
+}
+
+export const UserUrlSchema = SchemaFactory.createForClass(UserUrl);
+export const UrlSchema = SchemaFactory.createForClass(Url_entity);

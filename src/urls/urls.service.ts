@@ -1,29 +1,34 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 import { urlDto } from './urls.dto';
-import { URLDocument, userUrl, Url_entity, UrlSchema } from './urls.schema';
+import { Url_entity, UserUrl } from './urls.schema';
+import { UserUrlRepository } from './urls.repository';
 
 @Injectable()
-export class UrlsService {
-  constructor(
-    @InjectModel(userUrl.name) private urlModel: Model<URLDocument>,
-  ) {}
+export class UserUrlService {
+  constructor(private readonly userUrlRepository: UserUrlRepository) {}
 
-  async create(urlDto: urlDto): Promise<string> {
-    const createUrl = new this.urlModel(urlDto);
-    createUrl._id = urlDto.user_id;
-    createUrl.save();
-    console.log(createUrl);
-
-    return '';
+  async getUserUrlsById(userId: number): Promise<UserUrl> {
+    return this.userUrlRepository.findOne({ userId });
   }
 
-  async createUserCollection(userId: number) {
-    return this.urlModel.create(userId);
+  async getUserUrls(userId: number): Promise<UserUrl[]> {
+    return this.userUrlRepository.list({ userId });
   }
 
-  async findUserCollection(id: number): Promise<userUrl> {
-    return this.urlModel.findById(id).exec();
+  async createUserUrl(userId: number): Promise<UserUrl> {
+    return this.userUrlRepository.create({
+      user_id: userId,
+      urls: [],
+    });
+  }
+
+  async addUrlToUser(userId: number, urlDto: urlDto): Promise<UserUrl> {
+    const url = new Url_entity();
+    url.clicks = 0;
+    url.long_link = urlDto.long_link;
+    url.short_link = urlDto.short_link;
+    url.title = urlDto.title;
+    url.tags = [];
+    return this.userUrlRepository.findOneAndUpdate({ userId }, url);
   }
 }
