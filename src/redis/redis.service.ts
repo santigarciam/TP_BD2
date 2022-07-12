@@ -36,7 +36,7 @@ export class RedisService {
         await this.connect();
 
         if (!(await this.shortUrlExist(shortUrl))) {
-            this.client.set(shortUrl, longUrl);
+            this.client.set(shortUrl, "0:" + longUrl);
             return true;
         } else {
             return false;
@@ -52,7 +52,26 @@ export class RedisService {
 
     public async getUrlByHash(shortUrl: string): Promise<string> {
         await this.connect();
-        return this.client.get(shortUrl);
+        let longLink = await this.client.get(shortUrl);
+        if (longLink) {
+            let destination = longLink.substring(longLink.indexOf(":") + 1, longLink.length);
+            let clicks = Number(longLink.substring(0, longLink.indexOf(":")));
+            clicks++;
+            this.client.set(shortUrl, String(clicks) + ":" + destination);
+            return destination;
+        } else {
+            return longLink;
+        }
+    }
+
+    public async getUrlClicks(shortUrl: string): Promise<number> {
+        await this.connect();
+        let longLink = await this.client.get(shortUrl);
+        if (longLink) {
+            return Number(longLink.substring(0, longLink.indexOf(":")));
+        } else {
+            return 0;
+        }
     }
 
     public async shortUrlExist(shortUrl: string): Promise<boolean> {

@@ -33,8 +33,6 @@ export class UserUrlService {
     this.userUrlRepository.deleteUrlFromUser({ _id: userId }, short_link);
   }
 
-  //TODO: hacer un metodo que aumente los clicks de un short_url
-
   async updateUrl(
     userId: number,
     urlDto: updateUrlDto,

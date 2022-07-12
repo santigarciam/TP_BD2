@@ -55,6 +55,14 @@ export class UrlsController {
 
   }
 
+  //////////////////////////////////// TODO: ver si queda
+  @Get('/:short_link/clicks')
+  public async getLinkClicks(
+    @Param('short_link') short_link: string): Promise<number> {
+    return await this.redisService.getUrlClicks(short_link);
+  }
+  ////////////////////////////////////
+
   @Put('/:short_link')
   public async updateUrl(
     @Param('short_link') short_link: string,
