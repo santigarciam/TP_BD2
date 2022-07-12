@@ -2,11 +2,13 @@ import {
   Controller,
   Delete,
   HttpCode,
+  HttpException,
   Inject,
   Param,
   Put,
 } from '@nestjs/common';
 import { Post, Get, Body } from '@nestjs/common';
+import { RedisService } from 'src/redis/redis.service';
 import { RequestService } from 'src/request/request.service';
 import { updateUrlDto } from './updateUrl.dto';
 import { urlDto } from './urls.dto';
@@ -21,12 +23,24 @@ export class UrlsController {
   @Inject(RequestService)
   private requestService: RequestService;
 
+  @Inject(RedisService)
+  private redisService: RedisService;
+
   @Post()
   public async createUrl(@Body() body: urlDto): Promise<UserUrl> {
     // TODO: Agregar chequeo con redis si ese short_link ya existe
     const userId = this.requestService.getUser().id;
 
-    return this.userUrlService.addUrlToUser(userId, body);
+    const isAvailable = await this.redisService.createUrlKeyValue(
+      body.short_link,
+      body.long_link,
+    );
+
+    if (isAvailable) {
+      return this.userUrlService.addUrlToUser(userId, body);
+    }
+
+    throw new HttpException('Short URL unavailable :(', 409);
   }
 
   @Put('/:short_link')
@@ -46,7 +60,6 @@ export class UrlsController {
     return this.userUrlService.getUserUrlsById(userId);
   }
 
-  // TODO: Meter logica de aumentar los clicks pero usando redis!
   @Get('/:short_link')
   public async getUserUrlById(@Param('short_link') short_link: string) {
     const userId = this.requestService.getUser().id;
@@ -63,5 +76,6 @@ export class UrlsController {
   public async deleteUrlById(@Param('short_link') short_link: string) {
     const userId = this.requestService.getUser().id;
     this.userUrlService.deleteUrlFromUser(userId, short_link);
+    this.redisService.deleteKeyValue(short_link);
   }
 }
