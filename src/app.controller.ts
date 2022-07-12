@@ -1,5 +1,7 @@
-import { Controller, Get, HttpException, Inject, Param, Redirect } from "@nestjs/common";
+import { Controller, Get, HttpException, Inject, Param, Redirect, SetMetadata } from "@nestjs/common";
 import { RedisService } from "./redis/redis.service";
+
+export const Public = () => SetMetadata('isPublic', true);
 
 @Controller('/goto')
 export class AppController {
@@ -7,6 +9,7 @@ export class AppController {
     @Inject(RedisService)
     private readonly redisService: RedisService;
 
+    @Public()
     @Get('/:hash')
     @Redirect()
     public async redirection(@Param('hash') hash: string) {
