@@ -12,7 +12,6 @@ export class AppController {
     public async redirection(@Param('hash') hash: string) {
         let longUrl: string = await this.redisService.getUrlByHash(hash);
         if (longUrl) {
-            //TODO: agregar el llamado al UserUrlService para aumentar 1 click
             return { url: longUrl };
         } else {
             throw new HttpException(

@@ -7,7 +7,6 @@ import {
   SetMetadata,
 } from '@nestjs/common';
 import { UserUrlService } from 'src/urls/urls.service';
-import { AuthService } from '../auth/auth.service';
 import { RequestService } from '../request/request.service';
 import {
   ChangePasswordDto,

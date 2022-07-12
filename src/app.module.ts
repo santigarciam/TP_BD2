@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, Scope } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod, Scope } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UrlsModule } from './urls/urls.module';
 import { ConfigModule } from '@nestjs/config';
@@ -7,12 +7,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { UsersModule } from './users/users.module';
 import { AuthenticationMiddleWare } from './middleware/authentication.midleware';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { LogginInterceptor } from './interceptors/loggin.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { RequestModule } from './request/request.module';
 import { RedisModule } from './redis/redis.module';
 import { AppController } from './app.controller';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -34,10 +35,15 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
       scope: Scope.REQUEST,
       useClass: LogginInterceptor,
     },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(AuthenticationMiddleWare).forRoutes('*');
+    consumer.apply(AuthenticationMiddleWare)
+      .forRoutes('*');
   }
 }
