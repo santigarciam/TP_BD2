@@ -12,6 +12,7 @@ import { LogginInterceptor } from './interceptors/loggin.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { RequestModule } from './request/request.module';
 import { RedisModule } from './redis/redis.module';
+import { AppController } from './app.controller';
 
 const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 
@@ -26,7 +27,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
     RequestModule,
     MongooseModule.forRoot('mongodb://localhost/nest')
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_INTERCEPTOR,

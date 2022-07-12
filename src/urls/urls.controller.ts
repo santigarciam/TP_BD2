@@ -17,6 +17,7 @@ import { UserUrlService } from './urls.service';
 
 @Controller('urls')
 export class UrlsController {
+
   @Inject(UserUrlService)
   private userUrlService: UserUrlService;
 
@@ -28,19 +29,30 @@ export class UrlsController {
 
   @Post()
   public async createUrl(@Body() body: urlDto): Promise<UserUrl> {
-    // TODO: Agregar chequeo con redis si ese short_link ya existe
-    const userId = this.requestService.getUser().id;
 
-    const isAvailable = await this.redisService.createUrlKeyValue(
-      body.short_link,
-      body.long_link,
-    );
+    try {
 
-    if (isAvailable) {
-      return this.userUrlService.addUrlToUser(userId, body);
+      if (await this.redisService.shortUrlExist(body.short_link)) {
+        throw "Short URL unavailable :(";
+      }
+
+      const userId = this.requestService.getUser().id;
+
+      const isAvailable = await this.redisService.createUrlKeyValue(
+        body.short_link,
+        body.long_link,
+      );
+
+      if (isAvailable) {
+        return this.userUrlService.addUrlToUser(userId, body);
+      } else {
+        throw "Short URL unavailable :(";
+      }
+
+    } catch (err: any) {
+      throw new HttpException(err, 409);
     }
 
-    throw new HttpException('Short URL unavailable :(', 409);
   }
 
   @Put('/:short_link')
@@ -48,11 +60,30 @@ export class UrlsController {
     @Param('short_link') short_link: string,
     @Body() body: updateUrlDto,
   ): Promise<UserUrl> {
-    const userId = this.requestService.getUser().id;
-    const url = await this.getUserUrlById(short_link);
-    if (url) {
-      return this.userUrlService.updateUrl(userId, body, url);
+
+    try {
+
+      const userId = this.requestService.getUser().id;
+      const url = await this.getUserUrlById(short_link);
+
+      if (url) {
+
+        let updatedRedis = await this.redisService.updateUrlKeyValue(short_link, body.long_link);
+
+        if (updatedRedis) {
+          return this.userUrlService.updateUrl(userId, body, url);
+        } else {
+          throw "An was encountered trying to update the link, please try again later";
+        }
+
+      }
+
+    } catch (err: any) {
+
+      throw new HttpException(err, 409);
+
     }
+
   }
   @Get()
   public async getUserUrls(): Promise<UserUrl> {

@@ -6,7 +6,7 @@ import { updateUrlDto } from './updateUrl.dto';
 
 @Injectable()
 export class UserUrlService {
-  constructor(private readonly userUrlRepository: UserUrlRepository) {}
+  constructor(private readonly userUrlRepository: UserUrlRepository) { }
 
   async getUserUrlsById(userId: number): Promise<UserUrl> {
     return this.userUrlRepository.findOne({ userId });
@@ -32,6 +32,8 @@ export class UserUrlService {
   async deleteUrlFromUser(userId: number, short_link: string) {
     this.userUrlRepository.deleteUrlFromUser({ _id: userId }, short_link);
   }
+
+  //TODO: hacer un metodo que aumente los clicks de un short_url
 
   async updateUrl(
     userId: number,

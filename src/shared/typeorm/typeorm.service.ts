@@ -22,7 +22,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       logger: 'file',
       synchronize: true, // never use TRUE in production!
 
-      dropSchema: true, // TODO: BORRAR EN PRODUCCION!!!!!!!!
+      dropSchema: false, // TODO: BORRAR EN PRODUCCION!!!!!!!!
     };
   }
 }
