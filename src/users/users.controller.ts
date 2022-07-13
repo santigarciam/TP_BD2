@@ -62,6 +62,18 @@ export class UsersController {
   }
 
   @ApiSecurity('basic')
+  @ApiOperation({ summary: 'Get user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'The user information',
+    type: User,
+  })
+  @Get('/profile')
+  public async getProfile(): Promise<User> {
+    return this.requestService.getUser();
+  }
+
+  @ApiSecurity('basic')
   @ApiOperation({ summary: 'Update username' })
   @ApiResponse({
     status: 201,
