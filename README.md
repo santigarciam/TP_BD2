@@ -8,7 +8,7 @@
 
 Santiago Garcia Montagner
 
-Tomas cerdiera
+Tomas Cerdeira
 
 Alfonso Estol
 
