@@ -18,8 +18,6 @@ export class Url_entity {
   title: string;
 
   @Prop()
-  clicks: number;
-  @Prop()
   tags: string[];
 }
 

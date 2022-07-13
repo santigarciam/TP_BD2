@@ -4,6 +4,7 @@ import {
   HttpException,
   Inject,
   Post,
+  Put,
   SetMetadata,
 } from '@nestjs/common';
 import { UserUrlService } from 'src/urls/urls.service';
@@ -46,7 +47,7 @@ export class UsersController {
     return newUserResult.getData();
   }
 
-  @Post('/edit')
+  @Put()
   public async changeUsername(@Body() body: ChangeUsernameDto): Promise<User> {
     let user: User = this.requestService.getUser();
 
