@@ -12,6 +12,7 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.enableCors();
 
   await app.listen(port, () => {
     console.log('[WEB]', config.get<string>('BASE_URL'));

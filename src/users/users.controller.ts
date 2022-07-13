@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   Inject,
   Post,
@@ -44,6 +45,11 @@ export class UsersController {
     this.userUrlService.createUserUrl(newUserResult.getData().id);
 
     return newUserResult.getData();
+  }
+
+  @Get('/profile')
+  public async getProfile(): Promise<User> {
+    return this.requestService.getUser();
   }
 
   @Post('/edit')
