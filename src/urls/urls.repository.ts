@@ -58,7 +58,8 @@ export class UserUrlRepository {
       user.urls.push(url);
     }
 
-    return user.save();
+    user.save();
+    return user;
   }
 
   async findById(urlFilterQuery: FilterQuery<UserUrl>): Promise<UserUrl> {
