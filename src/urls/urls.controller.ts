@@ -8,6 +8,12 @@ import {
   Put,
 } from '@nestjs/common';
 import { Post, Get, Body } from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { RedisService } from 'src/redis/redis.service';
 import { RequestService } from 'src/request/request.service';
 import { updateUrlDto } from './updateUrl.dto';
@@ -15,6 +21,8 @@ import { urlDto } from './urls.dto';
 import { Url_entity, UserUrl } from './urls.schema';
 import { UserUrlService } from './urls.service';
 
+@ApiSecurity('basic')
+@ApiTags('urls')
 @Controller('urls')
 export class UrlsController {
   @Inject(UserUrlService)
@@ -26,6 +34,12 @@ export class UrlsController {
   @Inject(RedisService)
   private redisService: RedisService;
 
+  @ApiOperation({ summary: 'Create user URL' })
+  @ApiResponse({
+    status: 200,
+    description: 'The created user urls',
+    type: UserUrl,
+  })
   @Post()
   public async createUrl(@Body() body: urlDto): Promise<UserUrl> {
     try {
@@ -50,6 +64,12 @@ export class UrlsController {
     }
   }
 
+  @ApiOperation({ summary: 'Get short link total clicks ' })
+  @ApiResponse({
+    status: 200,
+    description: 'The number of clicks',
+    type: UserUrl,
+  })
   //////////////////////////////////// TODO: ver si queda
   @Get('/:short_link/clicks')
   public async getLinkClicks(
@@ -59,6 +79,12 @@ export class UrlsController {
   }
   ////////////////////////////////////
 
+  @ApiOperation({ summary: 'Update short link information' })
+  @ApiResponse({
+    status: 200,
+    description: 'The updated url',
+    type: UserUrl,
+  })
   @Put('/:short_link')
   public async updateUrl(
     @Param('short_link') short_link: string,
@@ -84,12 +110,25 @@ export class UrlsController {
       throw new HttpException(err, 409);
     }
   }
+
+  @ApiOperation({ summary: 'List user URLs' })
+  @ApiResponse({
+    status: 200,
+    description: 'The list of the urls for the user',
+    type: UserUrl,
+  })
   @Get()
   public async getUserUrls(): Promise<UserUrl> {
     const userId = this.requestService.getUser().id;
     return this.userUrlService.getUserUrlsById(userId);
   }
 
+  @ApiOperation({ summary: 'Get short link information' })
+  @ApiResponse({
+    status: 200,
+    description: 'The metadata saved for the given short link',
+    type: UserUrl,
+  })
   @Get('/:short_link')
   public async getUserUrlById(@Param('short_link') short_link: string) {
     const userId = this.requestService.getUser().id;
@@ -105,6 +144,11 @@ export class UrlsController {
     }
   }
 
+  @ApiOperation({ summary: 'Delete short link' })
+  @ApiResponse({
+    status: 200,
+    type: UserUrl,
+  })
   @Delete('/:short_link')
   public async deleteUrlById(@Param('short_link') short_link: string) {
     const userId = this.requestService.getUser().id;

@@ -7,6 +7,7 @@ import {
   Redirect,
   SetMetadata,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RedisService } from './redis/redis.service';
 
 export const Public = () => SetMetadata('isPublic', true);
@@ -16,6 +17,11 @@ export class AppController {
   @Inject(RedisService)
   private readonly redisService: RedisService;
 
+  @ApiOperation({ summary: 'Get the long link redirection ' })
+  @ApiResponse({
+    status: 302,
+    description: 'Redirection to the long link',
+  })
   @Public()
   @Get('/:hash')
   @Redirect()
