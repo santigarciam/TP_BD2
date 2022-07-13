@@ -6,10 +6,10 @@ import { updateUrlDto } from './updateUrl.dto';
 
 @Injectable()
 export class UserUrlService {
-  constructor(private readonly userUrlRepository: UserUrlRepository) { }
+  constructor(private readonly userUrlRepository: UserUrlRepository) {}
 
   async getUserUrlsById(userId: number): Promise<UserUrl> {
-    return this.userUrlRepository.findOne({ userId });
+    return this.userUrlRepository.findById({ _id: userId });
   }
 
   async createUserUrl(userId: number): Promise<UserUrl> {
@@ -21,7 +21,6 @@ export class UserUrlService {
 
   async addUrlToUser(userId: number, urlDto: urlDto): Promise<UserUrl> {
     const url = new Url_entity();
-    url.clicks = 0;
     url.long_link = urlDto.long_link;
     url.short_link = urlDto.short_link;
     url.title = urlDto.title;
@@ -29,8 +28,14 @@ export class UserUrlService {
     return this.userUrlRepository.findOneAndAddUrl({ _id: userId }, url);
   }
 
-  async deleteUrlFromUser(userId: number, short_link: string) {
-    this.userUrlRepository.deleteUrlFromUser({ _id: userId }, short_link);
+  async deleteUrlFromUser(
+    userId: number,
+    short_link: string,
+  ): Promise<boolean> {
+    return this.userUrlRepository.deleteUrlFromUser(
+      { _id: userId },
+      short_link,
+    );
   }
 
   async updateUrl(

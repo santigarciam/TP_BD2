@@ -5,8 +5,15 @@ import {
   HttpException,
   Inject,
   Post,
+  Put,
   SetMetadata,
 } from '@nestjs/common';
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UserUrlService } from 'src/urls/urls.service';
 import { RequestService } from '../request/request.service';
 import {
@@ -19,6 +26,7 @@ import { UsersService } from './users.service';
 
 export const Public = () => SetMetadata('isPublic', true);
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   @Inject(UsersService)
@@ -30,6 +38,12 @@ export class UsersController {
   @Inject(UserUrlService)
   private readonly userUrlService: UserUrlService;
 
+  @ApiOperation({ summary: 'Create user' })
+  @ApiResponse({
+    status: 200,
+    description: 'The created user',
+    type: User,
+  })
   @Post()
   @Public()
   public async createUser(@Body() body: CreateUserDto): Promise<User> {
@@ -47,12 +61,14 @@ export class UsersController {
     return newUserResult.getData();
   }
 
-  @Get('/profile')
-  public async getProfile(): Promise<User> {
-    return this.requestService.getUser();
-  }
-
-  @Post('/edit')
+  @ApiSecurity('basic')
+  @ApiOperation({ summary: 'Update username' })
+  @ApiResponse({
+    status: 201,
+    description: 'The updated user',
+    type: User,
+  })
+  @Put()
   public async changeUsername(@Body() body: ChangeUsernameDto): Promise<User> {
     let user: User = this.requestService.getUser();
 
@@ -68,6 +84,13 @@ export class UsersController {
     return updatedUserResult.getData();
   }
 
+  @ApiSecurity('basic')
+  @ApiOperation({ summary: 'Update user password' })
+  @ApiResponse({
+    status: 200,
+    description: 'The updated user',
+    type: User,
+  })
   @Post('/password')
   public async changePassword(@Body() body: ChangePasswordDto): Promise<User> {
     if (!(body.new_password === body.confirm_password)) {
