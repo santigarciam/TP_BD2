@@ -61,7 +61,7 @@ export class UserUrlRepository {
     return user.save();
   }
 
-  async findOne(urlFilterQuery: FilterQuery<UserUrl>): Promise<UserUrl> {
+  async findById(urlFilterQuery: FilterQuery<UserUrl>): Promise<UserUrl> {
     return this.userUrlModel.findById(urlFilterQuery);
   }
 

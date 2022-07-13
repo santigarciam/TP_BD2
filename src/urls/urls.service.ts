@@ -9,7 +9,7 @@ export class UserUrlService {
   constructor(private readonly userUrlRepository: UserUrlRepository) {}
 
   async getUserUrlsById(userId: number): Promise<UserUrl> {
-    return this.userUrlRepository.findOne({ _id: userId });
+    return this.userUrlRepository.findById({ _id: userId });
   }
 
   async createUserUrl(userId: number): Promise<UserUrl> {
