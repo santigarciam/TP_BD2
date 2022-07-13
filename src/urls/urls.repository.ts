@@ -22,18 +22,21 @@ export class UserUrlRepository {
   async deleteUrlFromUser(
     urlFilterQuery: FilterQuery<UserUrl>,
     short_link: string,
-  ) {
+  ): Promise<boolean> {
     const user = await this.userUrlModel.findById(urlFilterQuery);
     if (!user) {
-      return null;
+      return false;
     }
     const index = user.urls.findIndex(
       (element) => element.short_link == short_link,
     );
-    if (index > 0) {
+    if (index >= 0) {
       user.urls.splice(index);
       user.save();
+      return true;
     }
+
+    return false;
   }
 
   async findOneAndAddUrl(
@@ -59,7 +62,7 @@ export class UserUrlRepository {
   }
 
   async findOne(urlFilterQuery: FilterQuery<UserUrl>): Promise<UserUrl> {
-    return this.userUrlModel.findOne(urlFilterQuery);
+    return this.userUrlModel.findById(urlFilterQuery);
   }
 
   async createUserCollection(userId: number) {

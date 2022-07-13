@@ -9,7 +9,7 @@ export class UserUrlService {
   constructor(private readonly userUrlRepository: UserUrlRepository) {}
 
   async getUserUrlsById(userId: number): Promise<UserUrl> {
-    return this.userUrlRepository.findOne({ userId });
+    return this.userUrlRepository.findOne({ _id: userId });
   }
 
   async createUserUrl(userId: number): Promise<UserUrl> {
@@ -28,8 +28,14 @@ export class UserUrlService {
     return this.userUrlRepository.findOneAndAddUrl({ _id: userId }, url);
   }
 
-  async deleteUrlFromUser(userId: number, short_link: string) {
-    this.userUrlRepository.deleteUrlFromUser({ _id: userId }, short_link);
+  async deleteUrlFromUser(
+    userId: number,
+    short_link: string,
+  ): Promise<boolean> {
+    return this.userUrlRepository.deleteUrlFromUser(
+      { _id: userId },
+      short_link,
+    );
   }
 
   async updateUrl(
