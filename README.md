@@ -40,3 +40,7 @@ $ npm run start:prod
 ## Documentacion
 
 http://localhost:3000/documentation/
+
+## Front end basico de prueba
+
+https://observablehq.com/@tcerdeira/tpe-bd2-grupo-g1-1er-cuatrimestre-2022
