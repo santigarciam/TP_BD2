@@ -5,7 +5,9 @@ import {
   HttpException,
   Inject,
   Param,
+  ParseArrayPipe,
   Put,
+  Query,
 } from '@nestjs/common';
 import { Post, Get, Body } from '@nestjs/common';
 import {
@@ -118,9 +120,32 @@ export class UrlsController {
     type: UserUrl,
   })
   @Get()
-  public async getUserUrls(): Promise<UserUrl> {
+  public async getUserUrls(
+    @Query('tags') tags?: string,
+    @Query('title') title?: string,
+  ): Promise<UserUrl | Url_entity[]> {
+    console.log('Tags', tags);
     const userId = this.requestService.getUser().id;
-    return this.userUrlService.getUserUrlsById(userId);
+    const userUrls = await this.userUrlService.getUserUrlsById(userId);
+
+    userUrls.urls.filter((url) => url.tags.includes(tag));
+    if (tags) {
+      const tagsArray = tags.split(',');
+      let toRet = new Array<Url_entity>();
+      for (var tag of tagsArray) {
+        const res = userUrls.urls.filter((url) => url.tags.includes(tag));
+        toRet = toRet.concat(res);
+      }
+      userUrls.urls = toRet;
+    }
+
+    if (title) {
+      let toRet = new Array<Url_entity>();
+      console.log(title);
+      toRet = userUrls.urls.filter((url) => url.title == title);
+      userUrls.urls = toRet;
+    }
+    return userUrls;
   }
 
   @ApiOperation({ summary: 'Get short link information' })
