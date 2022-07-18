@@ -23,9 +23,9 @@ export class AppController {
     description: 'Redirection to the long link',
   })
   @Public()
-  @Get('/:hash')
+  @Get('/:short_link')
   @Redirect()
-  public async redirection(@Param('hash') hash: string) {
+  public async redirection(@Param('short_link') hash: string) {
     let longUrl: string = await this.redisService.getUrlByHash(hash);
     if (longUrl) {
       return { url: longUrl };
