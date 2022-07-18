@@ -6,7 +6,7 @@ interface ShortUrl {
   longUrl: string;
 }
 
-class ShortUrl extends Entity {}
+class ShortUrl extends Entity { }
 
 let schema = new Schema(
   ShortUrl,
@@ -37,8 +37,7 @@ export class RedisService {
       if (!(await this.shortUrlExist(shortUrl))) {
         this.client.set(shortUrl, '0:' + longUrl);
       } else {
-        const oldLongLink = await this.getUrlByHash(shortUrl);
-        let clicks = Number(oldLongLink.substring(0, oldLongLink.indexOf(':')));
+        let clicks = await this.getUrlClicks(shortUrl);
         this.client.set(shortUrl, clicks + ':' + longUrl);
       }
 
