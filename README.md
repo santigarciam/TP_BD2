@@ -36,8 +36,6 @@ $ npm run start:dev
 # Produccion
 $ npm run start:prod
 ```
-# Contenedores
-Correr mongo db y Postgresql localmente. 
 
 ## Documentacion
 
