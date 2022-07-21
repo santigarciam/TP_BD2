@@ -1,16 +1,19 @@
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <a href="https://www.postgresql.org/" target="blank"><img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" width="200" alt="PostgreSQL Logo" /></a>
+  <a href="https://www.mongodb.com/" target="blank"><img src="https://cdn.worldvectorlogo.com/logos/mongodb-icon-1.svg" width="200" alt="MongoDB Logo" /></a>
+  <a href="https://redis.io/" target="blank"><img src="https://www.svgrepo.com/show/303460/redis-logo.svg" width="200" alt="Redis Logo" /></a>
 </p>
 
 # Trabajo practico final - Base de datos 2
 
 ## Integrantes
 
-Santiago Garcia Montagner
+Tomas Cerdeira - 60051
 
-Tomas Cerdeira
+Santiago Garcia Montagner - 60352
 
-Alfonso Estol
+Alfonso Estol - 59782
 
 ## Descripcion
 
@@ -23,6 +26,24 @@ Se utilizo posgresql, mongo y redis para llegar a la solucion.
 ```bash
 $ npm install
 ```
+
+## Correr las bases de datos en sus puertos por defecto!
+
+- PostgreSQL: 5432
+  - En "TP_BD2/src/common/envs/.env" ajustar las variables a la configuracion de PostgreSQL
+
+    * DATABASE_HOST=<HOST_DB>
+    * DATABASE_NAME=<NAME_DB>
+    * DATABASE_USER=<USER_DB>
+    * DATABASE_PASSWORD=<PASSWORD_DB>
+    * DATABASE_PORT=5432
+
+- mongoDB: 27017
+
+- Redis: 6379
+  - En "TP_BD2/src/common/envs/.env" ajustar las variables a la configuracion de Redis
+
+      * REDIS_URL=<SERVER_URL>
 
 ## Ejecuccion
 
